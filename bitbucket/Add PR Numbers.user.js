@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Add PR Numbers
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @description  Add numbers to the main Bitbucket page to show code review overviews
 // @author       Tim VanDoren
 // @match        https://bitbucket.org/*
@@ -33,11 +33,11 @@
                 source: pr.source.branch.name,
                 dest: pr.destination.branch.name,
                 creator: pr.author.display_name,
-                reviewers: pr.participants.filter(participant => participant.role !== 'REVIEWER')
+                reviewers: pr.participants.filter(participant => participant.role === 'REVIEWER')
             }));
 
             const myCreatedPrs = allPrs.slice().filter(pr => pr.creator === currentUser.displayName);
-            const myApprovedPrs = myCreatedPrs.slice().filter(pr => pr.isApproved);
+            const myApprovedPrs = myCreatedPrs.slice().filter(pr => pr.reviewers.filter(reviewer => reviewer.approved).length > 1);
             const myPrsToReview = allPrs.slice()
                 .filter(pr => myCreatedPrs.indexOf(pr) < 0)
                 .filter(pr => pr.reviewers

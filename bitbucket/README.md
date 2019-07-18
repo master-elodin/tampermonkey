@@ -9,4 +9,5 @@ Add numbers to the PR tab in Bitbucket to show the following:
 ![Screenshot](bitbucket-pr-screenshot.png)
 
 ### Patch Notes
+1.0.2 - fix "show my approved PRs"
 1.0.1 - don't count PR as needing approval if it's already got two approvals
