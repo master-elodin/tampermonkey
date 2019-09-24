@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Add PR Numbers
 // @namespace    http://tampermonkey.net/
-// @version      1.0.3
+// @version      1.0.4
 // @description  Add numbers to the main Bitbucket page to show code review overviews
 // @author       Tim VanDoren
 // @match        https://bitbucket.org/*
@@ -22,11 +22,13 @@
     }
 
     const updateNumbers = () => {
-        const repoPath = jQuery('span[class^="ContainerTitleText"]').closest('a').attr('href');
+        const currentLocation = window.location.href;
+        const repoPath = currentLocation.substring(currentLocation.indexOf('bitbucket.org')).split('/').slice(1, 3).join('/');
         if(!repoPath) {
             console.error('No repo path found!');
+            return;
         }
-        const baseUrl = `https://bitbucket.org/!api/2.0/repositories${(repoPath.replace('https://bitbucket.org', '') + '/').replace('//', '/')}`;
+        const baseUrl = `https://bitbucket.org/!api/2.0/repositories/${(repoPath.replace('https://bitbucket.org', '') + '/').replace('//', '/')}`;
         jQuery.ajax(`${baseUrl}pullrequests?pagelen=25&fields=%2Bvalues.participants&q=state%3D%22OPEN%22&page=1`).then(data => {
             const allPrs = data.values.map(pr => new PullRequest({
                 name: pr.title,
